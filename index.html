@@ -1,20 +1,28 @@
 <!DOCTYPE html>
 <!-- ================================================================
-     AMY GIBSON · INSTRUCTIONAL DESIGN PORTFOLIO
-     A simple single-page portfolio: good type, generous white space,
-     one quiet green accent, and a few hand-made details (a botanical
-     sprig, project previews drawn in code, and gentle motion).
+     AMY GIBSON · INSTRUCTIONAL DESIGN PORTFOLIO  (autumn edition)
+     A clean single-page portfolio in soft, color-tinted whites, set
+     over a faded photo of a tree-lined autumn avenue. The photo shows
+     most strongly at the top, then fades behind a white "sheet" that
+     holds the content, so text always sits on a calm background.
 
      QUICK EDIT GUIDE (search for these words to jump to each spot):
+       EDIT-PHOTO     → the background photo file
        EDIT-EMAIL     → the address the "Email me" button opens
        EDIT-RESUME    → the resume PDF file name
        EDIT-STATUS    → the "Open to..." line at the top
        ADD-PROJECT    → copy a project block to add new work
+
+     FOLDER LAYOUT (keep these together in your GitHub repository):
+       index.html                     ← this file
+       assets/autumn-road.jpg         ← background photo
+       herbal-course-showcase/        ← the full herbal course
+       Amy-Gibson-Resume.pdf          ← your résumé (add this yourself)
      ================================================================ -->
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Amy Gibson · Instructional Designer</title>
   <meta name="description" content="Amy Gibson is an instructional designer and educator who builds online courses and professional training.">
 
@@ -26,42 +34,77 @@
   <style>
   /* ==============================================================
      1. COLORS + FONTS
+     "Chromatic whites" = whites with a hint of color in them, so the
+     page feels warm and clean instead of flat and gray. The accent is
+     a deep maple red-orange pulled straight from the photo.
      ============================================================== */
   :root {
-    --bg: #fafaf7;          /* warm off-white background */
-    --card: #ffffff;        /* panels and previews */
-    --text: #1d1f1e;        /* near-black text */
-    --muted: #6a6e6c;       /* gray for secondary text */
-    --line: #e3e3dd;        /* thin divider lines */
-    --accent: #2e5e52;      /* the accent color: deep green */
-    --tint: #e9f0ec;        /* very pale green for backgrounds */
-    --sage: #a9c2b8;        /* soft green for illustrations */
+    --paper: #fbf8f4;        /* linen white: the page itself            */
+    --sheet: rgba(253, 251, 248, .90); /* frosted white panel over the photo (90% solid) */
+    --card: #ffffff;         /* pure white: previews, cards             */
+    --tint: #f8ece2;         /* blush white: chips, quote, previews     */
+    --mist: #eef1ec;         /* cool sage white: a second, quieter tint */
+    --text: #2b2421;         /* warm near-black text                    */
+    --muted: #6f625a;        /* warm gray for secondary text            */
+    --line: #eadfd5;         /* thin divider lines                      */
+    --accent: #a8471f;       /* maple red-orange (readable on white)    */
+    --gold: #c28a2e;         /* autumn gold for small details           */
+    --sage: #c9b49e;         /* soft tan for drawings                   */
+    /* How much white covers the photo. Lower = more color shows. */
+    --veil-top: rgba(251, 248, 244, .30);
+    --veil-mid: rgba(251, 248, 244, .70);
+    --veil-end: rgba(251, 248, 244, .80);
     --serif: "Newsreader", Georgia, serif;
     --sans: "Instrument Sans", "Helvetica Neue", Arial, sans-serif;
   }
-  /* Dark mode: used automatically when a visitor's device is set to dark */
+  /* Dark mode: used automatically when a visitor's device is set to dark.
+     The same photo shows through a dusky veil instead of a white one. */
   @media (prefers-color-scheme: dark) {
-    :root {
-      --bg: #141615; --card: #1c1f1d; --text: #ecebe6; --muted: #9da19e; --line: #2a2d2b;
-      --accent: #8cc5b4; --tint: #1d2723; --sage: #3f5c52;
+    :root:not([data-theme="light"]) {
+      --paper: #17120f; --sheet: rgba(29, 23, 19, .90); --card: #231c18; --tint: #33261e; --mist: #252a24;
+      --text: #f2eae3; --muted: #b9a99c; --line: #3b302a; --accent: #ec9566; --gold: #e0b062; --sage: #6b5646;
+      --veil-top: rgba(23, 18, 15, .45); --veil-mid: rgba(23, 18, 15, .82); --veil-end: rgba(23, 18, 15, .9);
+      color-scheme: dark;
     }
+  }
+  :root[data-theme="dark"] {
+    --paper: #17120f; --sheet: rgba(29, 23, 19, .90); --card: #231c18; --tint: #33261e; --mist: #252a24;
+    --text: #f2eae3; --muted: #b9a99c; --line: #3b302a; --accent: #ec9566; --gold: #e0b062; --sage: #6b5646;
+    --veil-top: rgba(23, 18, 15, .45); --veil-mid: rgba(23, 18, 15, .82); --veil-end: rgba(23, 18, 15, .9);
+    color-scheme: dark;
   }
 
   /* ==============================================================
-     2. PAGE BASICS
+     2. PAGE BASICS + THE PHOTO BACKGROUND
      ============================================================== */
   * { box-sizing: border-box; }
   html { scroll-behavior: smooth; }
   body {
-    margin: 0; background: var(--bg); color: var(--text);
+    margin: 0; background: var(--paper); color: var(--text);
     font: 17px/1.7 var(--sans); -webkit-font-smoothing: antialiased;
   }
-  ::selection { background: var(--accent); color: var(--bg); }   /* highlighted text uses the accent */
+
+  /* The photo layer. "position: fixed" pins it to the window, so the
+     content scrolls over it like paper sliding across a picture.
+     EDIT-PHOTO: to use a different photo, put it in the assets folder
+     and change the file name in url(...) below. */
+  .backdrop {
+    position: fixed; inset: 0; z-index: -2;
+    background: url("assets/autumn-road.jpg") center 35% / cover no-repeat;
+  }
+  /* The white "veil" over the photo: thin at the top so the colors pop,
+     then thicker further down so the page stays clean. */
+  .backdrop::after {
+    content: ""; position: absolute; inset: 0;
+    background: linear-gradient(180deg, var(--veil-top) 0%, var(--veil-mid) 48%, var(--veil-end) 100%);
+  }
+
+  ::selection { background: var(--accent); color: var(--paper); }   /* highlighted text uses the accent */
   .wrap { max-width: 1000px; margin: 0 auto; padding-inline: 28px; }
   a { color: inherit; text-underline-offset: 4px; }
   a:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; border-radius: 4px; }
 
-  /* Section labels: a short green line followed by small caps text */
+  /* Section labels: a short maple line followed by small caps text */
   .eyebrow {
     display: flex; align-items: center; gap: 12px; margin: 6px 0 0;
     font-size: 13px; font-weight: 500; letter-spacing: .1em; text-transform: uppercase; color: var(--muted);
@@ -69,41 +112,43 @@
   .eyebrow::before { content: ""; width: 24px; height: 1px; background: var(--accent); }
 
   /* ==============================================================
-     3. HEADER (stays at the top; a hairline appears once you scroll)
+     3. HEADER (stays at the top; turns frosted white once you scroll)
      ============================================================== */
   header {
-    position: sticky; top: 0; z-index: 10;
-    background: color-mix(in srgb, var(--bg) 88%, transparent);
-    backdrop-filter: blur(10px);
-    border-bottom: 1px solid transparent; transition: border-color .3s;
+    position: sticky; top: env(safe-area-inset-top, 0px); z-index: 10;
+    border-bottom: 1px solid transparent; transition: background .3s, border-color .3s;
   }
-  header.scrolled { border-color: var(--line); }      /* the script adds "scrolled" */
+  header.scrolled {                                     /* the script adds "scrolled" */
+    background: var(--sheet); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+    border-color: var(--line);
+  }
   header .wrap { display: flex; justify-content: space-between; align-items: center; height: 72px; }
   .name { display: flex; align-items: center; gap: 10px; font: 500 19px var(--serif); text-decoration: none; }
   .monogram {                                          /* the circled "AG" mark */
-    width: 32px; height: 32px; border-radius: 50%; border: 1px solid var(--accent);
+    width: 32px; height: 32px; border-radius: 50%; border: 1px solid var(--accent); background: var(--card);
     display: grid; place-items: center; font: italic 15px var(--serif); color: var(--accent);
   }
   nav { display: flex; gap: 30px; font-size: 15px; }
-  nav a { text-decoration: none; color: var(--muted); position: relative; }
+  nav a { text-decoration: none; color: var(--text); position: relative; }
   nav a::after {                                       /* underline that grows on hover */
     content: ""; position: absolute; left: 0; bottom: -4px; height: 1px; width: 100%;
     background: var(--accent); transform: scaleX(0); transform-origin: left; transition: transform .3s;
   }
-  nav a:hover { color: var(--text); }
+  nav a:hover { color: var(--accent); }
   nav a:hover::after { transform: scaleX(1); }
 
   /* ==============================================================
-     4. INTRO
+     4. INTRO — sits right on the photo, inside a frosted white card
+     so the words stay easy to read while the trees glow around it.
      ============================================================== */
-  .intro { position: relative; padding-block: 88px 112px; display: grid; grid-template-columns: 1fr 260px; gap: 32px; align-items: center; }
-  /* soft green glow behind the intro */
-  .intro::before {
-    content: ""; position: absolute; z-index: -1; width: 560px; height: 560px; right: -160px; top: -60px;
-    background: radial-gradient(circle, var(--tint) 0%, transparent 65%);
+  .intro { padding-block: 56px 96px; }
+  .intro-card {
+    max-width: 640px; padding: 44px 44px 40px; border-radius: 24px;
+    background: var(--sheet); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+    box-shadow: 0 30px 60px -30px rgba(70, 35, 10, .35);
   }
   .status {                                            /* "Open to..." pill */
-    display: inline-flex; align-items: center; gap: 10px; padding: 6px 14px; margin-bottom: 30px;
+    display: inline-flex; align-items: center; gap: 10px; padding: 6px 14px; margin-bottom: 28px;
     border: 1px solid var(--line); border-radius: 999px; background: var(--card); font-size: 14px; color: var(--muted);
   }
   .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); position: relative; }
@@ -113,42 +158,47 @@
   }
   @keyframes pulse { from { transform: scale(.6); opacity: 1; } to { transform: scale(1.8); opacity: 0; } }
 
-  .intro h1 { font: 400 clamp(40px, 6.2vw, 66px)/1.12 var(--serif); letter-spacing: -.015em; margin: 0 0 26px; }
+  .intro h1 { font: 400 clamp(36px, 5.6vw, 58px)/1.12 var(--serif); letter-spacing: -.015em; margin: 0 0 22px; text-wrap: balance; }
   .intro h1 em { color: var(--accent); }
-  .intro p { color: var(--muted); font-size: 19px; max-width: 32em; margin: 0 0 40px; }
+  .intro p { color: var(--muted); font-size: 19px; max-width: 32em; margin: 0 0 34px; }
 
   /* Three quick facts under the intro */
   .facts { display: flex; flex-wrap: wrap; gap: 14px 40px; margin: 0; padding: 0; list-style: none; }
   .facts b { display: block; font: 400 30px/1.1 var(--serif); color: var(--accent); }
   .facts span { font-size: 14px; color: var(--muted); }
 
-  /* The botanical sprig drawing (a nod to my botany background) */
-  .sprig { width: 100%; height: auto; color: var(--accent); }
-  .sprig path { stroke-dasharray: 600; stroke-dashoffset: 600; animation: draw 2.6s ease forwards .3s; }
-  .sprig .leaf { fill: color-mix(in srgb, var(--sage) 45%, transparent); }
-  @keyframes draw { to { stroke-dashoffset: 0; } }
-
   /* ==============================================================
-     5. SECTIONS
+     5. THE CONTENT SHEET + SECTIONS
+     One big frosted-white panel holds every section below the intro.
+     On wide screens the faded photo shows around its edges.
      ============================================================== */
-  section { border-top: 1px solid var(--line); padding-block: 72px 96px; }
+  .sheet {
+    max-width: 1080px; margin: 0 auto; border-radius: 28px 28px 0 0;
+    background: var(--sheet); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+    box-shadow: 0 -20px 50px -30px rgba(70, 35, 10, .35);
+  }
+  section { padding-block: 72px 88px; }
+  section + section { border-top: 1px solid var(--line); }
   .split { display: grid; grid-template-columns: 190px 1fr; gap: 40px; align-items: start; }
+  .split > div { min-width: 0; }   /* lets long text wrap instead of widening the page */
   /* the section label stays in view while you scroll through that section */
   .split > .eyebrow { position: sticky; top: 104px; }
-  main { overflow-x: clip; }   /* keeps the soft glow from making the page scroll sideways */
+  main { overflow-x: clip; }
 
   /* ---- Projects ---- */
   .project + .project { margin-top: 96px; }
   .preview {                                           /* the drawn "screen" preview */
     display: block; background: var(--tint); border-radius: 14px; padding: 28px 28px 0; margin-bottom: 30px;
-    overflow: hidden; transition: transform .4s;
+    overflow: hidden;
   }
-  .preview svg { display: block; width: 100%; height: auto; border-radius: 8px 8px 0 0; box-shadow: 0 -1px 0 var(--line), 0 20px 40px -24px rgba(20,40,30,.35); transition: transform .4s; }
-  .project:hover .preview svg { transform: translateY(-6px); }   /* the screen lifts a little on hover */
+  .project:nth-child(even) .preview { background: var(--mist); }   /* alternate the two whites */
+  /* the screenshot sits in the frame like a screen, flush with the bottom */
+  .preview img { display: block; width: 100%; height: auto; border-radius: 8px 8px 0 0; box-shadow: 0 -1px 0 var(--line), 0 20px 40px -24px rgba(70,35,10,.35); transition: transform .4s; }
+  .project:hover .preview img { transform: translateY(-6px); }   /* the screen lifts a little on hover */
   .num { font: italic 18px var(--serif); color: var(--accent); }
-  .project h2 { font: 400 34px/1.2 var(--serif); margin: 2px 0 6px; letter-spacing: -.01em; }
+  .project h2 { font: 400 34px/1.2 var(--serif); margin: 2px 0 6px; letter-spacing: -.01em; text-wrap: balance; }
   .tags { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 20px; padding: 0; list-style: none; }
-  .tags li { font-size: 13px; padding: 3px 12px; border: 1px solid var(--line); border-radius: 999px; color: var(--muted); }
+  .tags li { font-size: 13px; padding: 3px 12px; border: 1px solid var(--line); border-radius: 999px; color: var(--muted); background: var(--card); }
   .project p { margin: 0 0 16px; max-width: 38em; }
   .project ul.points { margin: 0 0 22px; padding-left: 18px; max-width: 38em; }
   .project ul.points li { margin-bottom: 6px; }
@@ -156,11 +206,7 @@
   .link { color: var(--accent); font-weight: 500; text-decoration: none; display: inline-flex; gap: 8px; }
   .link span { transition: transform .25s; }
   .link:hover span { transform: translateX(4px); }    /* the arrow nudges right */
-
-  /* SVG colors for the previews (so they follow light/dark mode) */
-  .s-card { fill: var(--card); } .s-line { fill: var(--line); } .s-muted { fill: var(--muted); opacity: .35; }
-  .s-accent { fill: var(--accent); } .s-sage { fill: var(--sage); } .s-tint { fill: var(--tint); }
-  .s-stroke { stroke: var(--accent); fill: none; stroke-width: 2; }
+  .links { display: flex; flex-wrap: wrap; gap: 10px 28px; }
 
   /* ---- About ---- */
   .about p { margin: 0 0 18px; max-width: 38em; }
@@ -177,7 +223,7 @@
   .jobs li { position: relative; display: flex; justify-content: space-between; gap: 24px; padding: 0 0 26px 28px; }
   .jobs li::before {                                    /* the dot */
     content: ""; position: absolute; left: 0; top: 9px; width: 9px; height: 9px; border-radius: 50%;
-    border: 1.5px solid var(--accent); background: var(--bg);
+    border: 1.5px solid var(--accent); background: var(--card);
   }
   .jobs li::after {                                     /* the line connecting the dots */
     content: ""; position: absolute; left: 5px; top: 22px; bottom: 4px; width: 1px; background: var(--line);
@@ -189,24 +235,30 @@
   .jobs .when { white-space: nowrap; font-variant-numeric: tabular-nums; }
   .skills { display: flex; flex-wrap: wrap; gap: 8px; margin: 18px 0 0; padding: 0; list-style: none; }
   .skills li { font-size: 14px; padding: 5px 14px; border-radius: 999px; background: var(--tint); }
+  .skills li:nth-child(3n+2) { background: var(--mist); }        /* mix in the cool white */
 
-  /* ---- Contact ---- */
+  /* ---- Contact: a window onto the photo ---- */
   .contact-card {
-    position: relative; overflow: hidden; background: var(--text); color: var(--bg);
+    position: relative; overflow: hidden; color: #fffaf4;
     border-radius: 20px; padding: 56px 48px;
+    /* the same photo, darkened so white text reads clearly on it */
+    background: linear-gradient(100deg, rgba(40, 20, 8, .82) 0%, rgba(40, 20, 8, .55) 60%, rgba(40, 20, 8, .25) 100%),
+                url("assets/autumn-road.jpg") center 60% / cover;
   }
-  .contact-card h2 { font: 400 clamp(32px, 4.6vw, 46px)/1.2 var(--serif); margin: 0 0 12px; max-width: 14em; letter-spacing: -.01em; }
-  .contact-card p { margin: 0 0 32px; opacity: .75; }
-  .contact-card .sprig-small { position: absolute; right: -10px; bottom: -20px; width: 200px; color: var(--sage); opacity: .5; }
+  .contact-card h2 { font: 400 clamp(32px, 4.6vw, 46px)/1.2 var(--serif); margin: 0 0 12px; max-width: 14em; letter-spacing: -.01em; text-wrap: balance; }
+  .contact-card p { margin: 0 0 32px; opacity: .85; }
   .buttons { display: flex; flex-wrap: wrap; gap: 14px; position: relative; }
   .btn {
     display: inline-block; padding: 13px 26px; border-radius: 999px; font-weight: 500; font-size: 16px;
-    text-decoration: none; border: 1px solid var(--bg); transition: background .2s, color .2s, transform .2s;
+    text-decoration: none; border: 1px solid #fffaf4; color: #fffaf4; transition: background .2s, color .2s, transform .2s;
   }
-  .btn.primary { background: var(--bg); color: var(--text); }
-  .btn:hover { transform: translateY(-2px); background: var(--accent); border-color: var(--accent); color: var(--bg); }
+  .btn.primary { background: #fffaf4; color: #2b2421; }
+  .btn:hover { transform: translateY(-2px); background: #e0b062; border-color: #e0b062; color: #2b2421; }
+  .address { margin: 18px 0 0; font-size: 14px; opacity: .85; }   /* email shown as plain text too */
 
+  footer { background: var(--sheet); max-width: 1080px; margin: 0 auto; }
   footer .wrap { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px; color: var(--muted); font-size: 14px; padding-block: 0 48px; }
+  footer a { color: var(--muted); }
 
   /* Gentle fade-up as content scrolls into view */
   .reveal { transition: opacity .8s ease, transform .8s ease; }
@@ -216,21 +268,24 @@
      6. PHONES
      ============================================================== */
   @media (max-width: 760px) {
-    .intro { grid-template-columns: 1fr; padding-block: 48px 72px; }
-    .intro .sprig { display: none; }
+    .wrap { padding-inline: 18px; }
+    /* on phones the menu always gets a frosted strip, so it reads over the trees */
+    header { background: var(--sheet); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+    .intro { padding-block: 28px 56px; }
+    .intro-card { padding: 30px 24px 28px; }
+    .sheet { border-radius: 20px 20px 0 0; }
     .split { grid-template-columns: 1fr; gap: 22px; }
     .split > .eyebrow { position: static; }
     nav { gap: 18px; }
     .name span.full { display: none; }
     .jobs li { flex-direction: column; gap: 0; }
     .project h2 { font-size: 28px; }
-    .contact-card { padding: 40px 28px; }
+    .contact-card { padding: 40px 26px; }
     .preview { padding: 16px 16px 0; }
   }
   /* Respect visitors who prefer less motion */
   @media (prefers-reduced-motion: reduce) {
     html { scroll-behavior: auto; }
-    .sprig path { animation: none; stroke-dashoffset: 0; }
     .dot::after { animation: none; }
     .reveal, .reveal.waiting { opacity: 1; transform: none; transition: none; }
   }
@@ -238,6 +293,9 @@
 </head>
 
 <body>
+  <!-- The faded autumn photo behind everything (styled in section 2) -->
+  <div class="backdrop" aria-hidden="true"></div>
+
   <!-- ================= HEADER ================= -->
   <header id="header">
     <div class="wrap">
@@ -253,10 +311,10 @@
   <main>
     <!-- ================= INTRO ================= -->
     <div class="wrap intro">
-      <div>
+      <div class="intro-card">
         <!-- EDIT-STATUS: change or delete this line -->
         <div class="status"><span class="dot"></span>Open to instructional design roles</div>
-        <h1>I design impactful, learning experiences that work <em>where you need them,</em>, when you need them.</h1>
+        <h1>I design impactful learning experiences that work <em>where you need them, when you need them.</em></h1>
         <p>Instructional designer and educator with a background in psychology and service as a U.S. Army UH-60 Crew Chief.</p>
         <ul class="facts">
           <li><b>8 years</b><span>in the classroom</span></li>
@@ -264,18 +322,10 @@
           <li><b>M.Ed.</b><span>Instructional Design</span></li>
         </ul>
       </div>
-
-      <!-- Botanical sprig drawn with SVG. Each <path> is a line;
-           the CSS animation "draws" them in when the page loads. -->
-      <svg class="sprig" viewBox="0 0 260 340" aria-hidden="true">
-        <path class="leaf" d="M130 330 C128 250 132 170 150 40" stroke="currentColor" stroke-width="1.6" fill="none"/>
-        <path class="leaf" d="M131 270 C100 255 78 228 74 196 C104 204 124 230 131 270 Z" stroke="currentColor" stroke-width="1.8"/>
-        <path class="leaf" d="M133 230 C162 212 182 186 186 152 C156 162 138 190 133 230 Z" stroke="currentColor" stroke-width="1.8"/>
-        <path class="leaf" d="M137 180 C108 166 90 140 88 110 C116 118 133 144 137 180 Z" stroke="currentColor" stroke-width="1.8"/>
-        <path class="leaf" d="M143 128 C168 112 184 88 186 60 C160 70 146 96 143 128 Z" stroke="currentColor" stroke-width="1.8"/>
-        <path d="M150 40 C152 30 156 22 162 16" stroke="currentColor" stroke-width="1.4" fill="none"/>
-      </svg>
     </div>
+
+    <!-- Everything below sits on the frosted white sheet -->
+    <div class="sheet">
 
     <!-- ================= SELECTED WORK ================= -->
     <section id="work">
@@ -283,75 +333,39 @@
         <p class="eyebrow">Selected work</p>
         <div>
           <!-- ADD-PROJECT: copy everything from <article> to </article>, paste it
-               below the last one, and change the text. You can delete the
-               <div class="preview"> part if you don't want a drawing. -->
+               below the last one, and change the text. For the preview, save a
+               screenshot in the assets folder and change the img "src" to its
+               name (and "href" to where clicking it should go). -->
           <article class="project reveal">
-            <!-- Preview: a simple drawing of the course in Canvas, made from shapes -->
-            <div class="preview" aria-hidden="true">
-              <svg viewBox="0 0 640 330">
-                <rect class="s-card" width="640" height="330"/>
-                <rect class="s-line" width="640" height="32"/>
-                <circle class="s-muted" cx="20" cy="16" r="5"/><circle class="s-muted" cx="38" cy="16" r="5"/><circle class="s-muted" cx="56" cy="16" r="5"/>
-                <!-- left menu of course modules -->
-                <rect class="s-tint" x="0" y="32" width="150" height="298"/>
-                <rect class="s-accent" x="20" y="58" width="90" height="9" rx="4"/>
-                <rect class="s-muted" x="20" y="84" width="100" height="7" rx="3"/>
-                <rect class="s-muted" x="20" y="104" width="80" height="7" rx="3"/>
-                <rect class="s-muted" x="20" y="124" width="95" height="7" rx="3"/>
-                <rect class="s-muted" x="20" y="144" width="70" height="7" rx="3"/>
-                <!-- page title and text lines -->
-                <rect class="s-muted" x="180" y="60" width="210" height="14" rx="4" style="opacity:.6"/>
-                <rect class="s-muted" x="180" y="88" width="180" height="7" rx="3"/>
-                <rect class="s-muted" x="180" y="104" width="196" height="7" rx="3"/>
-                <rect class="s-muted" x="180" y="120" width="150" height="7" rx="3"/>
-                <!-- elderberry cluster illustration -->
-                <rect class="s-tint" x="420" y="56" width="190" height="150" rx="10"/>
-                <path class="s-stroke" d="M515 196 C512 160 506 130 492 104 M506 140 C530 126 548 112 556 92"/>
-                <g class="s-accent"><circle cx="486" cy="96" r="7"/><circle cx="498" cy="88" r="7"/><circle cx="478" cy="84" r="7"/><circle cx="492" cy="76" r="6"/><circle cx="556" cy="86" r="7"/><circle cx="566" cy="76" r="6"/><circle cx="548" cy="74" r="6"/></g>
-                <!-- activity cards -->
-                <rect class="s-tint" x="180" y="230" width="130" height="80" rx="10"/>
-                <rect class="s-tint" x="325" y="230" width="130" height="80" rx="10"/>
-                <rect class="s-tint" x="470" y="230" width="140" height="80" rx="10"/>
-                <circle class="s-sage" cx="205" cy="256" r="10"/><circle class="s-sage" cx="350" cy="256" r="10"/><circle class="s-sage" cx="495" cy="256" r="10"/>
-                <rect class="s-muted" x="196" y="280" width="90" height="7" rx="3"/><rect class="s-muted" x="341" y="280" width="90" height="7" rx="3"/><rect class="s-muted" x="486" y="280" width="100" height="7" rx="3"/>
-              </svg>
-            </div>
+            <!-- Preview: a screenshot of the course showcase.
+                 Clicking it opens the full course. -->
+            <a class="preview" href="herbal-course-showcase/index.html">
+              <img src="assets/preview-herbal-course.jpg" width="1600" height="960" loading="lazy"
+                   alt="The Herbal Identification and First Aid module: a list of nine module items beside the interactive Field Guide to Distinguishing Traits.">
+            </a>
             <span class="num">01</span>
             <h2>Herbal Identification &amp; First Aid</h2>
-            <ul class="tags"><li>Online course</li><li>Canvas LMS</li><li>HTML/CSS</li><li>Video</li></ul>
-            <p>A complete self-paced course that teaches adult learners to identify medicinal plants and use them safely for basic first aid. I designed and built it from the ground up in Canvas.</p>
+            <ul class="tags"><li>Canvas module</li><li>Canvas LMS</li><li>HTML/CSS</li><li>Video</li><li>Quinnipiac IDN 532</li></ul>
+            <p>A Canvas module that teaches learners to identify common medicinal plants and use them safely for basic first aid. I designed and built every page, the media, and the activities from the ground up.</p>
             <ul class="points">
-              <li>Animated intro video and a medicinal-history timeline to build context</li>
-              <li>Custom HTML/CSS pages, including an interactive slide on elderberry, dandelion, and echinacea</li>
-              <li>A peer-response identification activity that turns practice into discussion</li>
+              <li>A narrated microlecture on the history of medicinal plants, plus an herbal infographic, to build context</li>
+              <li>An interactive field guide for comparing elderberry, dandelion, and echinacea, followed by a low-stakes formative check with feedback</li>
+              <li>A peer identification discussion, and a hands-on elderberry syrup project as the final product</li>
             </ul>
+            <!-- This link opens the herbal-course-showcase folder that sits
+                 next to this file in your repository. -->
+            <div class="links">
+              <a class="link" href="herbal-course-showcase/index.html">Explore the full course <span>→</span></a>
+            </div>
           </article>
 
           <article class="project reveal">
-            <!-- Preview: a simple drawing of the Genially training, made from shapes -->
-            <div class="preview" aria-hidden="true">
-              <svg viewBox="0 0 640 330">
-                <rect class="s-card" width="640" height="330"/>
-                <rect class="s-line" width="640" height="32"/>
-                <circle class="s-muted" cx="20" cy="16" r="5"/><circle class="s-muted" cx="38" cy="16" r="5"/><circle class="s-muted" cx="56" cy="16" r="5"/>
-                <!-- welcome banner -->
-                <rect class="s-accent" x="40" y="56" width="560" height="74" rx="12"/>
-                <rect class="s-card" x="66" y="78" width="200" height="12" rx="4" style="opacity:.9"/>
-                <rect class="s-card" x="66" y="100" width="140" height="8" rx="3" style="opacity:.6"/>
-                <!-- three assignment sheets; one marked with an error -->
-                <rect class="s-tint" x="40" y="152" width="170" height="150" rx="10"/>
-                <rect class="s-tint" x="235" y="152" width="170" height="150" rx="10"/>
-                <rect class="s-tint" x="430" y="152" width="170" height="150" rx="10"/>
-                <g class="s-muted">
-                  <rect x="60" y="176" width="110" height="8" rx="3"/><rect x="60" y="196" width="130" height="6" rx="3"/><rect x="60" y="210" width="120" height="6" rx="3"/><rect x="60" y="224" width="90" height="6" rx="3"/>
-                  <rect x="255" y="176" width="110" height="8" rx="3"/><rect x="255" y="196" width="130" height="6" rx="3"/><rect x="255" y="210" width="120" height="6" rx="3"/><rect x="255" y="224" width="90" height="6" rx="3"/>
-                  <rect x="450" y="176" width="110" height="8" rx="3"/><rect x="450" y="196" width="130" height="6" rx="3"/><rect x="450" y="210" width="120" height="6" rx="3"/><rect x="450" y="224" width="90" height="6" rx="3"/>
-                </g>
-                <ellipse cx="320" cy="210" rx="72" ry="16" fill="none" stroke="#c4683f" stroke-width="2.5"/>
-                <circle class="s-accent" cx="180" cy="276" r="12"/><path d="M174 276 l4 5 l8 -9" stroke="#fff" stroke-width="2.5" fill="none"/>
-                <circle class="s-accent" cx="570" cy="276" r="12"/><path d="M564 276 l4 5 l8 -9" stroke="#fff" stroke-width="2.5" fill="none"/>
-              </svg>
-            </div>
+            <!-- Preview: a screenshot of the Genially title slide.
+                 Clicking it opens the live training in a new tab. -->
+            <a class="preview" href="https://view.genially.com/6a430121a262e2edd39d7239" target="_blank" rel="noopener">
+              <img src="assets/preview-teacher-orientation.jpg" width="726" height="380" loading="lazy"
+                   alt="Title slide of the teacher orientation training: a welcome to CrossPointe Preparatory with a Start Now button.">
+            </a>
             <span class="num">02</span>
             <h2>New Teacher Orientation</h2>
             <ul class="tags"><li>Professional training</li><li>Genially</li><li>Canvas</li><li>CrossPointe Preparatory</li></ul>
@@ -404,31 +418,28 @@
       <div class="wrap split">
         <p class="eyebrow">Contact</p>
         <div class="contact-card reveal">
-          <!-- a small copy of the sprig as decoration -->
-          <svg class="sprig-small" viewBox="0 0 260 340" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6">
-            <path d="M130 330 C128 250 132 170 150 40"/>
-            <path d="M131 270 C100 255 78 228 74 196 C104 204 124 230 131 270 Z"/>
-            <path d="M133 230 C162 212 182 186 186 152 C156 162 138 190 133 230 Z"/>
-            <path d="M137 180 C108 166 90 140 88 110 C116 118 133 144 137 180 Z"/>
-            <path d="M143 128 C168 112 184 88 186 60 C160 70 146 96 143 128 Z"/>
-          </svg>
           <h2>Let's talk about your next course or training.</h2>
           <p>I'm always happy to hear about a project.</p>
           <div class="buttons">
-            <!-- EDIT-EMAIL: change the address after "mailto:" -->
+            <!-- EDIT-EMAIL: change the address after "mailto:" (and in the line below) -->
             <a class="btn primary" href="mailto:agibson@quinnipiac.edu?subject=Hello%20from%20your%20portfolio">Email me</a>
             <!-- EDIT-RESUME: upload your resume PDF with this exact name, or change the name here -->
             <a class="btn" href="Amy-Gibson-Resume.pdf" target="_blank" rel="noopener">Download résumé</a>
           </div>
+          <!-- The address as plain text, for visitors whose Email button doesn't open an app -->
+          <p class="address">agibson@quinnipiac.edu</p>
         </div>
       </div>
     </section>
+
+    </div><!-- end of .sheet -->
   </main>
 
   <footer>
     <div class="wrap">
       <span>© <span id="year"></span> Amy Gibson</span>
-      <span>Designed and built by hand</span>
+      <!-- Photo credit: not required by Unsplash, but good practice -->
+      <span>Photo by <a href="https://unsplash.com/@maderdoki" target="_blank" rel="noopener">Balázs Mader</a> on <a href="https://unsplash.com/photos/brown-leafed-trees-pathway-L0FByuiEm08" target="_blank" rel="noopener">Unsplash</a></span>
     </div>
   </footer>
 
@@ -436,7 +447,7 @@
     // 1. Put the current year in the footer
     document.getElementById("year").textContent = new Date().getFullYear();
 
-    // 2. Show a thin line under the header once the visitor scrolls
+    // 2. Turn the header frosted white once the visitor scrolls
     const header = document.getElementById("header");
     window.addEventListener("scroll", () => header.classList.toggle("scrolled", window.scrollY > 10));
 
