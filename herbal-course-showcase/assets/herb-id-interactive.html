@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Field Guide: Identifying Common Medicinal Herbs</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --forest-deep:#2c4634;
+    --forest:#3c5c46;
+    --forest-mid:#587d63;
+    --parchment:#f4ecd8;
+    --parchment-alt:#ece0c4;
+    --parchment-line:#d9c9a3;
+    --amber:#c1893c;
+    --amber-light:#e0b76b;
+    --ink:#2b2620;
+    --ink-soft:#5a5346;
+    --elder:#5c3d5e;
+    --elder-light:#8a6a8c;
+    --dandy:#d4972f;
+    --dandy-light:#f0c766;
+    --echin:#a9668c;
+    --echin-cone:#8b5e34;
+    --wrong:#9c4a3c;
+    --right:#3c6b4a;
+    --radius:14px;
+    --shadow: 0 6px 18px rgba(44,70,52,0.12);
+  }
+
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background: var(--parchment);
+    background-image:
+      radial-gradient(circle at 15% 10%, rgba(193,137,60,0.07), transparent 40%),
+      radial-gradient(circle at 85% 90%, rgba(60,92,70,0.08), transparent 45%);
+    font-family:'EB Garamond', serif;
+    color:var(--ink);
+    padding: 32px 20px 56px;
+    min-height:100vh;
+  }
+
+  .wrap{max-width:960px;margin:0 auto;}
+
+  header.hero{
+    text-align:center;
+    margin-bottom: 28px;
+  }
+  .eyebrow{
+    font-family:'EB Garamond',serif;
+    letter-spacing:0.16em;
+    text-transform:uppercase;
+    font-size:12.5px;
+    color:var(--forest-mid);
+    font-weight:600;
+    margin-bottom:8px;
+  }
+  h1{
+    font-family:'Playfair Display', serif;
+    font-weight:700;
+    font-size: clamp(28px, 4vw, 40px);
+    color:var(--forest-deep);
+    margin:0 0 10px;
+    letter-spacing:0.01em;
+  }
+  .objective{
+    font-size:17px;
+    color:var(--ink-soft);
+    font-style:italic;
+    max-width:640px;
+    margin:0 auto;
+    line-height:1.5;
+  }
+  .objective b{ color:var(--forest); font-style:normal; }
+
+  /* Mode nav */
+  .mode-nav{
+    display:flex;
+    justify-content:center;
+    gap:10px;
+    margin: 26px 0 22px;
+    flex-wrap:wrap;
+  }
+  .mode-btn{
+    font-family:'EB Garamond', serif;
+    font-size:15.5px;
+    font-weight:600;
+    letter-spacing:0.03em;
+    background:transparent;
+    border:1.5px solid var(--parchment-line);
+    color:var(--forest);
+    padding:9px 20px;
+    border-radius:999px;
+    cursor:pointer;
+    transition:all .2s ease;
+  }
+  .mode-btn:hover{ border-color:var(--forest-mid); }
+  .mode-btn.active{
+    background:var(--forest-deep);
+    border-color:var(--forest-deep);
+    color:var(--parchment);
+  }
+  .mode-btn:focus-visible{ outline:2px solid var(--amber); outline-offset:2px; }
+
+  section.mode-panel{ display:none; }
+  section.mode-panel.active{ display:block; animation:fadein .35s ease; }
+  @keyframes fadein{ from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);} }
+
+  /* Plant tabs */
+  .plant-tabs{
+    display:flex;
+    justify-content:center;
+    gap:14px;
+    margin-bottom: 22px;
+    flex-wrap:wrap;
+  }
+  .plant-tab{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    background:var(--parchment-alt);
+    border:1.5px solid var(--parchment-line);
+    border-radius: 999px;
+    padding:8px 18px 8px 10px;
+    cursor:pointer;
+    font-family:'EB Garamond',serif;
+    font-size:16px;
+    font-weight:600;
+    color:var(--forest-deep);
+    transition:all .2s ease;
+  }
+  .plant-tab svg{ width:26px; height:26px; display:block; }
+  .plant-tab:hover{ border-color:var(--forest-mid); transform:translateY(-1px); }
+  .plant-tab.active{
+    background:var(--forest-deep);
+    border-color:var(--forest-deep);
+    color:var(--parchment);
+  }
+  .plant-tab:focus-visible{ outline:2px solid var(--amber); outline-offset:2px; }
+
+  /* Browse content card */
+  .specimen-card{
+    background:var(--parchment-alt);
+    border:1px solid var(--parchment-line);
+    border-radius:var(--radius);
+    box-shadow:var(--shadow);
+    padding: 30px;
+    display:grid;
+    grid-template-columns: 260px 1fr;
+    gap: 30px;
+    align-items:start;
+  }
+  .plant-panel{ display:none; }
+  .plant-panel.active{ display:contents; }
+
+  .illustration-frame{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:14px;
+  }
+  .medallion{
+    width:220px; height:220px;
+  }
+  .latin-name{
+    font-style:italic;
+    color:var(--ink-soft);
+    font-size:15px;
+    text-align:center;
+  }
+  .common-name{
+    font-family:'Playfair Display', serif;
+    font-size:23px;
+    font-weight:700;
+    color:var(--forest-deep);
+    text-align:center;
+  }
+
+  .trait-list{
+    display:flex;
+    flex-direction:column;
+    gap:16px;
+  }
+  .trait-row{
+    display:grid;
+    grid-template-columns: 34px 1fr;
+    gap:12px;
+    align-items:flex-start;
+    padding-bottom:14px;
+    border-bottom:1px solid var(--parchment-line);
+  }
+  .trait-row:last-child{ border-bottom:none; padding-bottom:0; }
+  .trait-icon{
+    width:30px; height:30px;
+    color:var(--forest);
+  }
+  .trait-label{
+    font-family:'Playfair Display', serif;
+    font-weight:600;
+    font-size:16.5px;
+    color:var(--forest-deep);
+    margin-bottom:3px;
+  }
+  .trait-text{
+    font-size:16px;
+    line-height:1.5;
+    color:var(--ink);
+  }
+
+  /* Compare mode */
+  .compare-table{
+    width:100%;
+    border-collapse:collapse;
+    background:var(--parchment-alt);
+    border:1px solid var(--parchment-line);
+    border-radius:var(--radius);
+    overflow:hidden;
+    box-shadow:var(--shadow);
+  }
+  .compare-table th, .compare-table td{
+    padding:14px 16px;
+    text-align:left;
+    vertical-align:top;
+    border-bottom:1px solid var(--parchment-line);
+    font-size:15.5px;
+    line-height:1.45;
+  }
+  .compare-table th{
+    font-family:'Playfair Display', serif;
+    font-size:17px;
+    background:var(--forest-deep);
+    color:var(--parchment);
+  }
+  .compare-table th:first-child, .compare-table td:first-child{
+    font-weight:600;
+    color:var(--forest-deep);
+    font-family:'Playfair Display', serif;
+    width:150px;
+  }
+  .compare-table tr:last-child td{ border-bottom:none; }
+  .compare-table td.elder{ border-left:3px solid var(--elder); }
+  .compare-table td.dandy{ border-left:3px solid var(--dandy); }
+  .compare-table td.echin{ border-left:3px solid var(--echin); }
+  .compare-table{ overflow-x:auto; display:block; }
+  @media(min-width:640px){ .compare-table{ display:table; } }
+
+  /* Quiz mode */
+  .quiz-intro{
+    text-align:center;
+    color:var(--ink-soft);
+    margin-bottom:22px;
+    font-size:16px;
+  }
+  .score-badge{
+    display:inline-block;
+    background:var(--forest-deep);
+    color:var(--parchment);
+    font-family:'Playfair Display',serif;
+    font-weight:700;
+    padding:4px 14px;
+    border-radius:999px;
+    margin-left:8px;
+    font-size:14px;
+  }
+  .quiz-card{
+    background:var(--parchment-alt);
+    border:1px solid var(--parchment-line);
+    border-radius:var(--radius);
+    box-shadow:var(--shadow);
+    padding:24px 26px;
+    margin-bottom:18px;
+  }
+  .quiz-q{
+    font-family:'Playfair Display', serif;
+    font-size:18px;
+    color:var(--forest-deep);
+    margin-bottom:16px;
+    line-height:1.4;
+  }
+  .quiz-options{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+  }
+  .quiz-opt{
+    font-family:'EB Garamond', serif;
+    font-size:15.5px;
+    font-weight:600;
+    background:var(--parchment);
+    border:1.5px solid var(--parchment-line);
+    color:var(--forest-deep);
+    padding:10px 18px;
+    border-radius:10px;
+    cursor:pointer;
+    transition:all .15s ease;
+  }
+  .quiz-opt:hover:not(:disabled){ border-color:var(--forest-mid); transform:translateY(-1px); }
+  .quiz-opt:focus-visible{ outline:2px solid var(--amber); outline-offset:2px; }
+  .quiz-opt.correct{ background:var(--right); border-color:var(--right); color:#fff; }
+  .quiz-opt.incorrect{ background:var(--wrong); border-color:var(--wrong); color:#fff; }
+  .quiz-opt:disabled{ cursor:default; }
+  .quiz-feedback{
+    margin-top:14px;
+    font-size:15px;
+    color:var(--ink-soft);
+    line-height:1.5;
+    display:none;
+  }
+  .quiz-feedback.show{ display:block; }
+  .quiz-reset{
+    display:block;
+    margin:8px auto 0;
+    font-family:'EB Garamond', serif;
+    font-size:15px;
+    font-weight:600;
+    background:transparent;
+    border:1.5px solid var(--forest-mid);
+    color:var(--forest-deep);
+    padding:9px 22px;
+    border-radius:999px;
+    cursor:pointer;
+  }
+  .quiz-reset:hover{ background:var(--forest-deep); color:var(--parchment); border-color:var(--forest-deep); }
+
+  footer{
+    text-align:center;
+    margin-top:36px;
+    font-size:13.5px;
+    color:var(--ink-soft);
+    letter-spacing:0.02em;
+  }
+
+  @media (max-width:640px){
+    .specimen-card{ grid-template-columns:1fr; }
+    .illustration-frame{ margin-bottom:6px; }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    section.mode-panel.active{ animation:none; }
+    *{ transition:none !important; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="hero">
+    <div class="eyebrow">Herbal Identification &amp; First Aid</div>
+    <h1>Field Guide to Distinguishing Traits</h1>
+    <p class="objective">Objective: <b>identify common medicinal herbs</b> using distinguishing characteristics such as leaf shape, flower structure, habitat, and growth pattern.</p>
+  </header>
+
+  <nav class="mode-nav" role="tablist" aria-label="View mode">
+    <button class="mode-btn active" data-mode="browse" role="tab" aria-selected="true">Browse Specimens</button>
+    <button class="mode-btn" data-mode="compare" role="tab" aria-selected="false">Compare Traits</button>
+    <button class="mode-btn" data-mode="quiz" role="tab" aria-selected="false">Test Your Eye</button>
+  </nav>
+
+  <!-- BROWSE MODE -->
+  <section class="mode-panel active" id="mode-browse">
+    <div class="plant-tabs" role="tablist" aria-label="Select a plant">
+      <button class="plant-tab active" data-plant="elder" role="tab" aria-selected="true">
+        <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="11" fill="#5c3d5e" opacity="0.15"/><circle cx="12" cy="12" r="3.5" fill="#5c3d5e"/></svg>
+        Elderberry
+      </button>
+      <button class="plant-tab" data-plant="dandy" role="tab" aria-selected="false">
+        <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="11" fill="#d4972f" opacity="0.15"/><circle cx="12" cy="12" r="3.5" fill="#d4972f"/></svg>
+        Dandelion
+      </button>
+      <button class="plant-tab" data-plant="echin" role="tab" aria-selected="false">
+        <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="11" fill="#a9668c" opacity="0.15"/><circle cx="12" cy="12" r="3.5" fill="#a9668c"/></svg>
+        Echinacea
+      </button>
+    </div>
+
+    <div class="specimen-card">
+
+      <!-- ELDERBERRY -->
+      <div class="plant-panel active" data-panel="elder" style="display:contents;">
+        <div class="illustration-frame">
+          <svg class="medallion" viewBox="0 0 220 220">
+            <circle cx="110" cy="110" r="104" fill="#f4ecd8" stroke="#c1893c" stroke-width="2"/>
+            <!-- stem -->
+            <line x1="110" y1="185" x2="110" y2="110" stroke="#3c5c46" stroke-width="3" stroke-linecap="round"/>
+            <!-- leaflets: pinnate compound, 5 -->
+            <g stroke="#3c5c46" stroke-width="2" fill="#587d63" fill-opacity="0.55">
+              <path d="M110,140 C95,120 95,95 110,80 C125,95 125,120 110,140 Z"/>
+              <path d="M110,150 C85,140 70,120 75,100 C98,102 112,120 110,150 Z" transform="rotate(-8 110 150)"/>
+              <path d="M110,150 C135,140 150,120 145,100 C122,102 108,120 110,150 Z" transform="rotate(8 110 150)"/>
+              <path d="M110,160 C80,155 60,140 62,118 C90,118 108,135 110,160 Z" transform="rotate(-4 110 160)"/>
+              <path d="M110,160 C140,155 160,140 158,118 C130,118 112,135 110,160 Z" transform="rotate(4 110 160)"/>
+            </g>
+            <!-- umbel flower cluster -->
+            <g fill="#f4ecd8" stroke="#c1893c" stroke-width="1.5">
+              <circle cx="110" cy="72" r="5"/>
+              <circle cx="98" cy="76" r="5"/>
+              <circle cx="122" cy="76" r="5"/>
+              <circle cx="87" cy="84" r="5"/>
+              <circle cx="133" cy="84" r="5"/>
+              <circle cx="78" cy="94" r="5"/>
+              <circle cx="142" cy="94" r="5"/>
+              <circle cx="104" cy="66" r="5"/>
+              <circle cx="116" cy="66" r="5"/>
+            </g>
+            <!-- berry cluster accent -->
+            <g fill="#5c3d5e">
+              <circle cx="128" cy="150" r="3.5"/>
+              <circle cx="136" cy="158" r="3.5"/>
+              <circle cx="132" cy="166" r="3.5"/>
+              <circle cx="122" cy="160" r="3.5"/>
+            </g>
+          </svg>
+          <div class="common-name">Elderberry</div>
+          <div class="latin-name">Sambucus nigra / canadensis</div>
+        </div>
+
+        <div class="trait-list">
+          <div class="trait-row">
+            <svg class="trait-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 21c-5-1-8-5-8-10 5 0 9 3 10 8"/><path d="M12 21c5-1 8-5 8-10-5 0-9 3-10 8"/><path d="M12 3v18"/></svg>
+            <div><div class="trait-label">Leaf Shape</div><div class="trait-text">Compound, pinnate leaves with 5–9 pointed, saw-toothed leaflets arranged in opposite pairs along a central stalk.</div></div>
+          </div>
+          <div class="trait-row">
+            <svg class="trait-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="2.4"/><path d="M12 3v4M12 17v4M21 12h-4M7 12H3M18.4 5.6l-2.8 2.8M8.4 15.6l-2.8 2.8M18.4 18.4l-2.8-2.8M8.4 8.4L5.6 5.6"/></svg>
+            <div><div class="trait-label">Flower Structure</div><div class="trait-text">Broad, flat-topped clusters (umbels) of tiny, five-petaled creamy-white flowers, later forming drooping clusters of dark purple-black berries.</div></div>
+          </div>
+          <div class="trait-row">
+            <svg class="trait-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 18c3-6 6-3 9-9 3 6 6 3 9 9"/><path d="M3 20h18"/></svg>
+            <div><div class="trait-label">Habitat</div><div class="trait-text">Moist soil along stream banks, forest edges, ditches, and hedgerows; full sun to partial shade.</div></div>
+          </div>
+          <div class="trait-row">
+            <svg class="trait-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 21V9"/><path d="M12 13c-3 0-5-2-5-5 3 0 5 2 5 5Z"/><path d="M12 9c3 0 5-2 5-5-3 0-5 2-5 5Z"/></svg>
+            <div><div class="trait-label">Growth Pattern</div><div class="trait-text">Fast-growing, multi-stemmed shrub or small tree, 6–12 feet tall, with arching woody branches.</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- DANDELION -->
+      <div class="plant-panel" data-panel="dandy" style="display:none;">
+        <div class="illustration-frame">
+          <svg class="medallion" viewBox="0 0 220 220">
+            <circle cx="110" cy="110" r="104" fill="#f4ecd8" stroke="#c1893c" stroke-width="2"/>
+            <line x1="110" y1="185" x2="110" y2="95" stroke="#3c5c46" stroke-width="3" stroke-linecap="round"/>
+            <!-- basal rosette leaves, jagged -->
+            <g stroke="#3c5c46" stroke-width="2" fill="#587d63" fill-opacity="0.55">
+              <path d="M110,185 L88,182 L96,175 L80,170 L92,164 L78,156 L94,154 L86,144 L100,148 L110,140 Z"/>
+              <path d="M110,185 L132,182 L124,175 L140,170 L128,164 L142,156 L126,154 L134,144 L120,148 L110,140 Z"/>
+            </g>
+            <!-- flower head: radiating ray florets -->
+            <g stroke="#d4972f" stroke-width="2.4" stroke-linecap="round">
+              <line x1="110" y1="95" x2="110" y2="65"/>
+              <line x1="110" y1="95" x2="128" y2="70"/>
+              <line x1="110" y1="95" x2="140" y2="82"/>
+              <line x1="110" y1="95" x2="145" y2="97"/>
+              <line x1="110" y1="95" x2="140" y2="112"/>
+              <line x1="110" y1="95" x2="128" y2="122"/>
+              <line x1="110" y1="95" x2="92" y2="70"/>
+              <line x1="110" y1="95" x2="80" y2="82"/>
+              <line x1="110" y1="95" x2="75" y2="97"/>
+              <line x1="110" y1="95" x2="80" y2="112"/>
+              <line x1="110" y1="95" x2="92" y2="122"/>
+            </g>
+            <circle cx="110" cy="95" r="7" fill="#f0c766" stroke="#d4972f" stroke-width="1.5"/>
+          </svg>
+          <div class="common-name">Dandelion</div>
+          <div class="latin-name">Taraxacum officinale</div>
+        </div>
+
+        <div class="trait-list">
+          <div class="trait-row">
+            <svg class="trait-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 21c-5-1-8-5-8-10 5 0 9 3 10 8"/><path d="M12 21c5-1 8-5 8-10-5 0-9 3-10 8"/><path d="M12 3v18"/></svg>
+            <div><div class="trait-label">Leaf Shape</div><div class="trait-text">Deeply toothed, lance-shaped leaves forming a low basal rosette; jagged teeth point back toward the base — the "lion's tooth" that gives the plant its name.</div></div>
+          </div>
+          <div class="trait-row">
+            <svg class="trait-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="2.4"/><path d="M12 3v4M12 17v4M21 12h-4M7 12H3M18.4 5.6l-2.8 2.8M8.4 15.6l-2.8 2.8M18.4 18.4l-2.8-2.8M8.4 8.4L5.6 5.6"/></svg>
+            <div><div class="trait-label">Flower Structure</div><div class="trait-text">Single bright yellow composite flower head of tightly packed ray florets, atop a hollow, leafless stem; matures into a spherical white seed puff.</div></div>
+          </div>
+          <div class="trait-row">
+            <svg class="trait-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 18c3-6 6-3 9-9 3 6 6 3 9 9"/><path d="M3 20h18"/></svg>
+            <div><div class="trait-label">Habitat</div><div class="trait-text">Highly adaptable — lawns, meadows, roadsides, and disturbed soil, in full sun.</div></div>
+          </div>
+          <div class="trait-row">
+            <svg class="trait-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 21V9"/><path d="M12 13c-3 0-5-2-5-5 3 0 5 2 5 5Z"/><path d="M12 9c3 0 5-2 5-5-3 0-5 2-5 5Z"/></svg>
+            <div><div class="trait-label">Growth Pattern</div><div class="trait-text">Low-growing perennial rosette with a deep taproot; no true branching stem, just leaves hugging the ground.</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ECHINACEA -->
+      <div class="plant-panel" data-panel="echin" style="display:none;">
+        <div class="illustration-frame">
+          <svg class="medallion" viewBox="0 0 220 220">
+            <circle cx="110" cy="110" r="104" fill="#f4ecd8" stroke="#c1893c" stroke-width="2"/>
+            <line x1="110" y1="185" x2="110" y2="100" stroke="#3c5c46" stroke-width="3" stroke-linecap="round"/>
+            <!-- alternate lance leaves -->
+            <g stroke="#3c5c46" stroke-width="2" fill="#587d63" fill-opacity="0.55">
+              <ellipse cx="90" cy="160" rx="18" ry="7" transform="rotate(-25 90 160)"/>
+              <ellipse cx="130" cy="140" rx="18" ry="7" transform="rotate(20 130 140)"/>
+            </g>
+            <!-- drooping petals -->
+            <g fill="#a9668c" stroke="#8b5670" stroke-width="1.5">
+              <path d="M110,100 C100,120 96,140 100,150 C106,142 110,120 110,100Z"/>
+              <path d="M110,100 C120,120 124,140 120,150 C114,142 110,120 110,100Z" transform="rotate(35 110 100)"/>
+              <path d="M110,100 C120,120 124,140 120,150 C114,142 110,120 110,100Z" transform="rotate(-35 110 100)"/>
+              <path d="M110,100 C120,120 124,140 120,150 C114,142 110,120 110,100Z" transform="rotate(70 110 100)"/>
+              <path d="M110,100 C120,120 124,140 120,150 C114,142 110,120 110,100Z" transform="rotate(-70 110 100)"/>
+              <path d="M110,100 C120,120 124,140 120,150 C114,142 110,120 110,100Z" transform="rotate(105 110 100)"/>
+              <path d="M110,100 C120,120 124,140 120,150 C114,142 110,120 110,100Z" transform="rotate(-105 110 100)"/>
+              <path d="M110,100 C120,120 124,140 120,150 C114,142 110,120 110,100Z" transform="rotate(140 110 100)"/>
+            </g>
+            <!-- raised cone center -->
+            <circle cx="110" cy="95" r="16" fill="#8b5e34"/>
+            <g fill="#6f4a29">
+              <circle cx="104" cy="88" r="1.6"/><circle cx="112" cy="86" r="1.6"/><circle cx="118" cy="91" r="1.6"/>
+              <circle cx="106" cy="96" r="1.6"/><circle cx="114" cy="97" r="1.6"/><circle cx="110" cy="90" r="1.6"/>
+              <circle cx="100" cy="94" r="1.6"/><circle cx="119" cy="99" r="1.6"/>
+            </g>
+          </svg>
+          <div class="common-name">Echinacea</div>
+          <div class="latin-name">Echinacea purpurea</div>
+        </div>
+
+        <div class="trait-list">
+          <div class="trait-row">
+            <svg class="trait-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 21c-5-1-8-5-8-10 5 0 9 3 10 8"/><path d="M12 21c5-1 8-5 8-10-5 0-9 3-10 8"/><path d="M12 3v18"/></svg>
+            <div><div class="trait-label">Leaf Shape</div><div class="trait-text">Coarse, rough-textured, lance-to-oval leaves with prominent veins, arranged alternately up a sturdy stem.</div></div>
+          </div>
+          <div class="trait-row">
+            <svg class="trait-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="2.4"/><path d="M12 3v4M12 17v4M21 12h-4M7 12H3M18.4 5.6l-2.8 2.8M8.4 15.6l-2.8 2.8M18.4 18.4l-2.8-2.8M8.4 8.4L5.6 5.6"/></svg>
+            <div><div class="trait-label">Flower Structure</div><div class="trait-text">Large daisy-like flower with drooping pink-purple petals surrounding a raised, spiny, cone-shaped orange-brown center.</div></div>
+          </div>
+          <div class="trait-row">
+            <svg class="trait-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 18c3-6 6-3 9-9 3 6 6 3 9 9"/><path d="M3 20h18"/></svg>
+            <div><div class="trait-label">Habitat</div><div class="trait-text">Dry prairies, open woodlands, and rocky glades in full sun; drought-tolerant once established.</div></div>
+          </div>
+          <div class="trait-row">
+            <svg class="trait-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 21V9"/><path d="M12 13c-3 0-5-2-5-5 3 0 5 2 5 5Z"/><path d="M12 9c3 0 5-2 5-5-3 0-5 2-5 5Z"/></svg>
+            <div><div class="trait-label">Growth Pattern</div><div class="trait-text">Upright, clump-forming perennial, 2–4 feet tall, with sturdy branching stems.</div></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- COMPARE MODE -->
+  <section class="mode-panel" id="mode-compare">
+    <table class="compare-table">
+      <thead>
+        <tr>
+          <th>Trait</th>
+          <th>Elderberry</th>
+          <th>Dandelion</th>
+          <th>Echinacea</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Leaf Shape</td>
+          <td class="elder">Compound, pinnate, 5–9 saw-toothed leaflets in opposite pairs</td>
+          <td class="dandy">Deeply toothed, lance-shaped, low basal rosette</td>
+          <td class="echin">Coarse, lance-to-oval, alternate along the stem</td>
+        </tr>
+        <tr>
+          <td>Flower Structure</td>
+          <td class="elder">Flat-topped umbel of tiny white flowers</td>
+          <td class="dandy">Single yellow composite head on a bare stem</td>
+          <td class="echin">Drooping purple petals around a spiny orange-brown cone</td>
+        </tr>
+        <tr>
+          <td>Habitat</td>
+          <td class="elder">Moist banks, forest edges, hedgerows</td>
+          <td class="dandy">Lawns, meadows, disturbed soil, full sun</td>
+          <td class="echin">Dry prairies, open woodland, rocky glades</td>
+        </tr>
+        <tr>
+          <td>Growth Pattern</td>
+          <td class="elder">Multi-stemmed shrub, 6–12 ft, arching branches</td>
+          <td class="dandy">Ground-hugging rosette, deep taproot, no true stem</td>
+          <td class="echin">Upright clump, 2–4 ft, branching stems</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- QUIZ MODE -->
+  <section class="mode-panel" id="mode-quiz">
+    <p class="quiz-intro">Read each clue and choose the plant it describes.<span class="score-badge" id="score-badge">0 / 3</span></p>
+
+    <div class="quiz-card" data-answer="dandy">
+      <div class="quiz-q">1. This plant grows as a low rosette hugging the ground, with no true upright stem, and a single deep taproot.</div>
+      <div class="quiz-options">
+        <button class="quiz-opt" data-choice="elder">Elderberry</button>
+        <button class="quiz-opt" data-choice="dandy">Dandelion</button>
+        <button class="quiz-opt" data-choice="echin">Echinacea</button>
+      </div>
+      <div class="quiz-feedback"></div>
+    </div>
+
+    <div class="quiz-card" data-answer="echin">
+      <div class="quiz-q">2. Its flower has drooping petals around a raised, spiny, cone-shaped center — the source of its genus name.</div>
+      <div class="quiz-options">
+        <button class="quiz-opt" data-choice="elder">Elderberry</button>
+        <button class="quiz-opt" data-choice="dandy">Dandelion</button>
+        <button class="quiz-opt" data-choice="echin">Echinacea</button>
+      </div>
+      <div class="quiz-feedback"></div>
+    </div>
+
+    <div class="quiz-card" data-answer="elder">
+      <div class="quiz-q">3. Its compound leaves have several saw-toothed leaflets, and it grows as a multi-stemmed shrub near stream banks.</div>
+      <div class="quiz-options">
+        <button class="quiz-opt" data-choice="elder">Elderberry</button>
+        <button class="quiz-opt" data-choice="dandy">Dandelion</button>
+        <button class="quiz-opt" data-choice="echin">Echinacea</button>
+      </div>
+      <div class="quiz-feedback"></div>
+    </div>
+
+    <button class="quiz-reset" id="quiz-reset">Reset Quiz</button>
+  </section>
+
+  <footer>Herbal Identification &amp; First Aid — Module: Reading Distinguishing Characteristics</footer>
+</div>
+
+<script>
+  // Mode switching
+  const modeBtns = document.querySelectorAll('.mode-btn');
+  const modePanels = {
+    browse: document.getElementById('mode-browse'),
+    compare: document.getElementById('mode-compare'),
+    quiz: document.getElementById('mode-quiz'),
+  };
+  modeBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      modeBtns.forEach(b => { b.classList.remove('active'); b.setAttribute('aria-selected','false'); });
+      btn.classList.add('active'); btn.setAttribute('aria-selected','true');
+      Object.values(modePanels).forEach(p => p.classList.remove('active'));
+      modePanels[btn.dataset.mode].classList.add('active');
+    });
+  });
+
+  // Plant tab switching
+  const plantTabs = document.querySelectorAll('.plant-tab');
+  const plantPanels = document.querySelectorAll('.plant-panel');
+  plantTabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      plantTabs.forEach(t => { t.classList.remove('active'); t.setAttribute('aria-selected','false'); });
+      tab.classList.add('active'); tab.setAttribute('aria-selected','true');
+      plantPanels.forEach(p => {
+        if(p.dataset.panel === tab.dataset.plant){
+          p.style.display = 'contents';
+          p.classList.add('active');
+        } else {
+          p.style.display = 'none';
+          p.classList.remove('active');
+        }
+      });
+    });
+  });
+
+  // Quiz logic
+  let score = 0;
+  const scoreBadge = document.getElementById('score-badge');
+  const quizCards = document.querySelectorAll('.quiz-card');
+  const names = { elder: 'Elderberry', dandy: 'Dandelion', echin: 'Echinacea' };
+
+  quizCards.forEach(card => {
+    const correct = card.dataset.answer;
+    const opts = card.querySelectorAll('.quiz-opt');
+    const feedback = card.querySelector('.quiz-feedback');
+    opts.forEach(opt => {
+      opt.addEventListener('click', () => {
+        if (card.dataset.answered) return;
+        card.dataset.answered = "true";
+        const choice = opt.dataset.choice;
+        opts.forEach(o => { o.disabled = true; });
+        if (choice === correct) {
+          opt.classList.add('correct');
+          score++;
+          feedback.textContent = 'Correct — that\'s ' + names[correct] + '.';
+        } else {
+          opt.classList.add('incorrect');
+          card.querySelector('[data-choice="'+correct+'"]').classList.add('correct');
+          feedback.textContent = 'Not quite — that clue points to ' + names[correct] + '.';
+        }
+        feedback.classList.add('show');
+        scoreBadge.textContent = score + ' / 3';
+      });
+    });
+  });
+
+  document.getElementById('quiz-reset').addEventListener('click', () => {
+    score = 0;
+    scoreBadge.textContent = '0 / 3';
+    quizCards.forEach(card => {
+      delete card.dataset.answered;
+      card.querySelectorAll('.quiz-opt').forEach(o => {
+        o.disabled = false;
+        o.classList.remove('correct','incorrect');
+      });
+      card.querySelector('.quiz-feedback').classList.remove('show');
+    });
+  });
+</script>
+</body>
+</html>
